@@ -1,9 +1,4 @@
-#include <NewTone.h>
 #include "includes.h"
-#define PING_PIN_TRIG 7
-#define PING_PIN_ECHO 6
-#define PING_PIN_TRIG_CN 5
-#define PING_PIN_ECHO_CN 4
 #define MAX_DISTANCE 200 // Maximum distance we want to ping for (in centimeters). Maximum sensor distance is rated at 400-500cm.
 NewPing sonar(PING_PIN_TRIG, PING_PIN_ECHO, MAX_DISTANCE);
 NewPing sonar_cn(PING_PIN_TRIG_CN, PING_PIN_ECHO_CN, MAX_DISTANCE);
@@ -19,32 +14,13 @@ void setup()
   pingTimer_cn = millis();
   manualMode = true;
   Serial1.begin(9600); // Sabertooth serial line
-  Serial2.begin(9600); // HC-05 serial line  
+  Serial2.begin(9600); // HM-10 serial line  
   Serial.begin(9600); // Serial monitor line
   ST.autobaud();
   pinMode(hornPin, OUTPUT);
   ST.drive(0);
   ST.turn(0);  
   // playStartUpSound();
-}
-void sonarTest() {
-  Serial.print(sonar.ping_cm()) + "cm";
-}
-void echoCheck() { // Timer2 interrupt calls this function every 24uS where you can check the ping status.
-  // Don't do anything here!
-  if (sonar.check_timer()) { // This is how you check to see if the ping was received.
-    // Here's where you can add code.
-    int dist = sonar.ping_result / US_ROUNDTRIP_CM;
-    Serial.println("USA:");
-    Serial.println(dist);
-  }
-}
-void echoCheckChina() {  
-  if(sonar_cn.check_timer()){
-    int dist2 = sonar_cn.ping_result / US_ROUNDTRIP_CM;
-    Serial.println("China:");
-    Serial.println(dist2);
-  }
 }
 void loop()
 { 
@@ -59,55 +35,6 @@ void loop()
   if (millis() >= pingTimer_cn) {   // pingSpeed milliseconds since last ping, do another ping.
     pingTimer_cn += pingSpeed;      // Set the next ping time.
     sonar_cn.ping_timer(echoCheckChina); // Send out the ping, calls "echoCheck" function every 24uS where you can check the ping status.
-  }
-}
-
-void processSerialInput() {
-   while (Serial2.available()) {
-    // get the new byte:
-    char inChar = (char)Serial2.read();
-    if (inChar == '\n') {
-      stringComplete = true;
-    }
-    else {
-    // else add it to the inputString:
-      buffer += inChar;
-    }
-  }
-  if(stringComplete){
-    switch (buffer[0]) {
-      case 'h':
-        playHorn = true;
-        stringComplete = false;
-        Serial.print("playing horn sound\n");
-        hornIterator = -1;
-        break;
-      case '?':
-        Serial2.write(manualMode ? "m" : "a");
-        Serial.print("?????????????????????");
-        break;
-      case 'm':
-        manualMode = true;
-        Serial.print("m");
-        break;
-      case 'a':
-        manualMode = false;
-        Serial.print("a");
-        break;
-      default:
-        stringComplete = false;
-        if(manualMode){
-          Serial.print(buffer +'\n');
-          int speed = buffer.substring(0,3).toInt() - 127;
-          int direction = buffer.substring(3).toInt() - 127;
-          ST.drive(speed);
-          ST.turn(direction);
-        }
-        else 
-          Serial.print("Nice try lol\n");
-        break;        
-    }
-    buffer = "";
   }
 }
 
