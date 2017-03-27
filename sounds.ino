@@ -8,10 +8,10 @@ void playStartUpSound() {
     if(previousMillis == 0 || currentMillis - previousMillis >= dLay * delayScaling[startupIterator]){
       previousMillis = currentMillis;
       startupIterator++; 
-      noNewTone(hornPin);
+      noNewTone(HORN_PIN);
       playXP = startupIterator < length ? true : false;
       if(playXP){
-         NewTone(hornPin, notes[startupIterator]);
+         NewTone(HORN_PIN, notes[startupIterator]);
       }
     }
   }
@@ -25,11 +25,11 @@ void playHornParallelized() {
   currentMillis = millis();
   if(previousMillis == 0 || currentMillis - previousMillis >= dLay * delayScaling[hornIterator]){
     previousMillis = currentMillis;
-    hornIterator++;
-    noNewTone(hornPin);     
+    hornIterator++;    
+    noNewTone(HORN_PIN);     
     playHorn = hornIterator < length ? true : false;
     if(playHorn){
-      NewTone(hornPin, notes[hornIterator]);
+      NewTone(HORN_PIN, notes[hornIterator]);
     }
     else {
       hornIterator = -1;

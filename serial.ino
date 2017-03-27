@@ -14,13 +14,9 @@ void processSerialInput() {
     switch (buffer[0]) {
       case 'h':
         playHorn = true;
-        stringComplete = false;
         Serial.print("playing horn sound\n");
         hornIterator = -1;
-        break;
-      case '?':
-        Serial2.write(manualMode ? "m" : "a");
-        Serial.print("?????????????????????");
+        previousMillis = 0;
         break;
       case 'm':
         manualMode = true;
@@ -31,7 +27,6 @@ void processSerialInput() {
         Serial.print("a");
         break;
       default:
-        stringComplete = false;
         if(manualMode){
           Serial.print(buffer +'\n');
           int speed = buffer.substring(0,3).toInt() - 127;
@@ -42,7 +37,8 @@ void processSerialInput() {
         else 
           Serial.print("Nice try lol\n");
         break;        
-    }
+    }    
+    stringComplete = false;
     buffer = "";
   }
 }
