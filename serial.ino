@@ -28,6 +28,9 @@ void processSerialInput() {
         break;
       default:
         if(manualMode){
+          if(buffer.length() != 6) {
+            break;
+          }
           Serial.print(buffer +'\n');
           int speed = buffer.substring(0,3).toInt() - 127;
           int direction = buffer.substring(3).toInt() - 127;
@@ -37,8 +40,9 @@ void processSerialInput() {
         else 
           Serial.print("Nice try lol\n");
         break;        
-    }    
+    }   
     stringComplete = false;
     buffer = "";
+    
   }
 }

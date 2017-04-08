@@ -10,7 +10,7 @@ void setup()
 {  
   pingTimer = millis();
   pingTimer_cn = millis();
-  manualMode = true;
+  manualMode = false;
   Serial1.begin(9600); // Sabertooth serial line
   Serial2.begin(9600); // HM-10 serial line  
   Serial.begin(9600); // Serial monitor line
@@ -26,17 +26,21 @@ void loop()
   processSerialInput();
   if(!manualMode) {
     followUser();
+    /*
+    if (millis() >= pingTimer) {   // pingSpeed milliseconds since last ping, do another ping.
+    pingTimer += PING_SPEED;      // Set the next ping time.
+    sonar.ping_timer(echoCheck); // Send out the ping, calls "echoCheck" function every 24uS where you can check the ping status.
+    }
+    */
+    /*if (millis() >= pingTimer_cn) {   // pingSpeed milliseconds since last ping, do another ping.
+      pingTimer_cn += PING_SPEED;      // Set the next ping time.
+      sonar_cn.ping_timer(echoCheckChina); // Send out the ping, calls "echoCheck" function every 24uS where you can check the ping status.
+    }
+    */
+    
   }
   if(playHorn) {
     playHornParallelized(); // Parallelized implementation of horn method
-  }
-  if (millis() >= pingTimer) {   // pingSpeed milliseconds since last ping, do another ping.
-    pingTimer += PING_SPEED;      // Set the next ping time.
-    sonar.ping_timer(echoCheck); // Send out the ping, calls "echoCheck" function every 24uS where you can check the ping status.
-  }
-  if (millis() >= pingTimer_cn) {   // pingSpeed milliseconds since last ping, do another ping.
-    pingTimer_cn += PING_SPEED;      // Set the next ping time.
-    sonar_cn.ping_timer(echoCheckChina); // Send out the ping, calls "echoCheck" function every 24uS where you can check the ping status.
   }
 }
 
