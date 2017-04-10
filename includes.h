@@ -14,6 +14,11 @@
 #define RECEIVER_FL A3
 #define RECEIVER_L A4
 #define HORN_PIN 11
+#define DIRECTION_LEFT 0
+#define DIRECTION_SLIGHT_LEFT 1
+#define DIRECTION_NONE 2
+#define DIRECTION_SLIGHT_RIGHT 3
+#define DIRECTION_RIGHT 4
 void playStartUpSound();
 void playHornParallelized();
 void processSerialInput();

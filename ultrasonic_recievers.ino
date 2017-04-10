@@ -9,27 +9,28 @@ void followUser(){
   r = analogRead(RECEIVER_R);
   int dir = getDirection(l, fl, fc, fr, r);
   switch(dir){
-    case 0:
-      ST.turn(-30);
+    case DIRECTION_LEFT:
+      smoothTurnTo(-30);
       Serial.println("hard left");
       break;
-    case 1:
-      ST.turn(-15);
+    case DIRECTION_SLIGHT_LEFT:
+      smoothTurnTo(-15);
       Serial.println("left");
       break;
-    case 2:
-      ST.turn(0);
+    case DIRECTION_NONE:
+      smoothTurnTo(0);
       Serial.println("none");
       break;
-    case 3:
-      ST.turn(15);
+    case DIRECTION_SLIGHT_RIGHT:
+      smoothTurnTo(15);
       Serial.println("right");
       break;
-    case 4:
-      ST.turn(30);
+    case DIRECTION_RIGHT:
+      smoothTurnTo(30);
       Serial.println("hard right");
       break;   
   }
+  previousDir = dir;
   /*
   Serial.print(l);
   Serial.print(" ");
@@ -43,27 +44,43 @@ void followUser(){
   Serial.print(" \n");
   */  
 }
+void smoothTurnTo(int dir) {
+  if (dir == previousDir)
+    return;
+  if (dir < previousDir) {
+    for (int i = previousDir - 1; i >= dir; i--){
+      ST.turn(i);
+    }
+  }
+  else {
+    for (int i = previousDir  + 1; i <= dir; i++){
+      ST.turn(i);
+    }
+  }
+}
 int getDirection(int l, int fl, int fc, int fr, int r) {
-  int max = 0, direction = 0;
+  int max = 0, direction = DIRECTION_LEFT;
   if(l > max){
     max = l;
   }
   if(fl > max) {
     max = fl;
-    direction = 1;
+    direction = DIRECTION_SLIGHT_LEFT;
   }
   if(fc > max){
     max = fc;
-    direction = 2;
+    direction = DIRECTION_NONE;
   }
   if (fr > max){
     max = fr;
-    direction = 3;
+    direction = DIRECTION_SLIGHT_RIGHT;
   }
   if(r > max) {
     max = r;
-    direction = 4;
+    direction = DIRECTION_RIGHT;
   }
+  if (max < 50)
+    return 2;
   return direction;
 }
 int takeSamples(int numberOfSamples) {

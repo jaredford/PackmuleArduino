@@ -2,7 +2,7 @@
 NewPing sonar(PING_PIN_TRIG, PING_PIN_ECHO, MAX_DISTANCE);
 NewPing sonar_cn(PING_PIN_TRIG_CN, PING_PIN_ECHO_CN, MAX_DISTANCE);
 Sabertooth ST(128, Serial1); // Address 128, and use Serial1 as the serial port.
-int hornIterator = -1, startupIterator = -1;
+int hornIterator = -1, startupIterator = -1, previousDir = 0;
 unsigned long previousMillis = 0, currentMillis = 0, pingTimer, pingTimer_cn;
 String buffer = "";
 bool stringComplete = false, playHorn = false, manualMode = true, playXP = true;
