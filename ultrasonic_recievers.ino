@@ -80,7 +80,7 @@ int getDirection(int l, int fl, int fc, int fr, int r) {
     direction = DIRECTION_RIGHT;
   }
   if (max < 50)
-    return 2;
+    return DIRECTION_NONE;
   return direction;
 }
 int takeSamples(int numberOfSamples) {
