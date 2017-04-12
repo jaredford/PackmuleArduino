@@ -6,7 +6,7 @@ void processSerialInput() {
       stringComplete = true;
     }
     else {
-    // else add it to the inputString:
+    // else add it to the inputString
       buffer += inChar;
     }
   }

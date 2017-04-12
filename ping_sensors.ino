@@ -1,17 +1,27 @@
-void sonarTest() {
-  Serial.print(sonar.ping_cm()) + "cm";
-}
-void echoCheck() { // Timer2 interrupt calls this function every 24uS where you can check the ping status.
-  // Don't do anything here!
-  if (sonar.check_timer()) { // This is how you check to see if the ping was received.
-    int dist = sonar.ping_result / US_ROUNDTRIP_CM;
-    Serial.println(dist);
+void checkPings() {
+  for (uint8_t i = 0; i < NUM_OF_PINGS; i++) {
+    if (millis() >= pingTimer[i]) {
+      pingTimer[i] += PING_INTERVAL * NUM_OF_PINGS;
+      if (i == 0 && currentSensor == (NUM_OF_PINGS - 1)){
+        oneSensorCycle(); // Do something with results.
+      }     
+      sonar[currentSensor].timer_stop();      
+      currentSensor = i;
+      cm[currentSensor] = 0;
+      sonar[currentSensor].ping_timer(echoCheck);
+    }
   }
 }
-void echoCheckChina() {  
-  if(sonar_cn.check_timer()){
-    int dist2 = sonar_cn.ping_result / US_ROUNDTRIP_CM;
-    Serial.println("China:");
-    Serial.println(dist2);
+void echoCheck() {
+  if (sonar[currentSensor].check_timer())
+      cm[currentSensor] = sonar[currentSensor].ping_result / US_ROUNDTRIP_CM;      
+}
+void oneSensorCycle() { // Do something with the results.
+  for (uint8_t i = 0; i < NUM_OF_PINGS; i++) {
+    Serial.print(i);
+    Serial.print("=");
+    Serial.print(cm[i]);
+    Serial.print("cm ");
   }
+  Serial.println();
 }

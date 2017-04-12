@@ -1,7 +1,7 @@
 void playStartUpSound() {
   int length = 7;
   int notes[] ={NOTE_DS6,NOTE_DS5,NOTE_AS5,NOTE_GS5,NOTE_DS5,NOTE_DS6,NOTE_AS5};
-  int dLay = 125;//abe
+  int dLay = 125;
   int delayScaling[] = {3,1,2,2,2,2,4};
   while(playXP){
     currentMillis = millis();

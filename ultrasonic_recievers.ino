@@ -31,7 +31,6 @@ void followUser(){
       break;   
   }
   previousDir = dir;
-  /*
   Serial.print(l);
   Serial.print(" ");
   Serial.print(fl);
@@ -42,7 +41,6 @@ void followUser(){
   Serial.print(" ");
   Serial.print(r);
   Serial.print(" \n");
-  */  
 }
 void smoothTurnTo(int dir) {
   if (dir == previousDir)
