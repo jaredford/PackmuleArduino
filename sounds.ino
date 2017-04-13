@@ -17,7 +17,7 @@ void playStartUpSound() {
   }
 }
 
-void playHornParallelized() {
+void playHorn() {
   int length = 12;
   int dLay = 100;
   int notes[] = {NOTE_G5,NOTE_E5,NOTE_C5,NOTE_C5,NOTE_C5,NOTE_D5,NOTE_E5,NOTE_F5,NOTE_G5,NOTE_G5,NOTE_G5,NOTE_E5};
@@ -27,8 +27,8 @@ void playHornParallelized() {
     previousMillis = currentMillis;
     hornIterator++;    
     noNewTone(HORN_PIN);     
-    playHorn = hornIterator < length ? true : false;
-    if(playHorn){
+    shouldPlayHorn = hornIterator < length ? true : false;
+    if(shouldPlayHorn){
       NewTone(HORN_PIN, notes[hornIterator]);
     }
     else {

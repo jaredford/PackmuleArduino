@@ -8,10 +8,10 @@ unsigned long pingTimer[NUM_OF_PINGS];
 unsigned int cm[NUM_OF_PINGS];
 uint8_t currentSensor = 0;
 Sabertooth ST(128, Serial1); // Address 128, and use Serial1 as the serial port.
-int hornIterator = -1, startupIterator = -1, previousDir = 0, tries = 0;
+int hornIterator = -1, startupIterator = -1, previousDir = 0, tries = 0, errors = 0;
 unsigned long previousMillis = 0, currentMillis = 0;
 String buffer = "";
-bool stringComplete = false, playHorn = false, manualMode = true, playXP = true;
+bool stringComplete = false, shouldPlayHorn = false, manualMode = true, playXP = true, errorSent = false, errorCleared = false;
 void setup() 
 {
   manualMode = false;
@@ -34,14 +34,14 @@ void loop()
   processSerialInput();
   if(!manualMode) {
     // probably want to reinitialize pings here
-    //followUser();
-    checkPings();   
+    followUser();
+    //checkPings();   
   }
   else {    
     // probably want to nullify pings here
   }
-  if(playHorn) {
-    playHornParallelized(); // Parallelized implementation of horn method
+  if(shouldPlayHorn) {
+    playHorn(); // Parallelized implementation of horn method
   }
 }
 

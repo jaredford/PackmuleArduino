@@ -1,37 +1,62 @@
 void followUser(){
-  //int fl = takeSamples(50);// we probably need to sample this as we get some inconsistent results from the receivers
-  //if(fl > 20){ 
+  // Variables to hold sensor readings
   int l, fl, fc, fr, r;
+  
+  // Read from all the sensors
   l = analogRead(RECEIVER_L);
   fl = analogRead(RECEIVER_FL);
   fc = analogRead(RECEIVER_FC);
   fr = analogRead(RECEIVER_FR);
   r = analogRead(RECEIVER_R);
+  
   int dir = getDirection(l, fl, fc, fr, r);
   switch(dir){
     case DIRECTION_LEFT:
-      smoothTurnTo(-30);
+      ST.turn(-30);
+      ST.drive(0);
       Serial.println("hard left");
+      clearErrors();
+      previousDir = dir;
       break;
     case DIRECTION_SLIGHT_LEFT:
-      smoothTurnTo(-15);
+      ST.turn(-15);
+      ST.drive(10);
       Serial.println("left");
+      clearErrors();
+      previousDir = dir;
       break;
     case DIRECTION_NONE:
-      smoothTurnTo(0);
+      ST.turn(0);
+      ST.drive(20);
       Serial.println("none");
+      clearErrors();
+      previousDir = dir;
       break;
     case DIRECTION_SLIGHT_RIGHT:
-      smoothTurnTo(15);
+      ST.turn(15);
+      ST.drive(10);
       Serial.println("right");
+      clearErrors();
+      previousDir = dir;
       break;
     case DIRECTION_RIGHT:
-      smoothTurnTo(30);
+      ST.turn(30);
+      ST.drive(0);
       Serial.println("hard right");
-      break;   
+      clearErrors();
+      previousDir = dir;
+      break;
+    case -1: // We only want to fall into this case if several consecutive errors have occurred
+      ST.turn(0);
+      ST.drive(0);
+      if(errorCleared){
+        Serial2.write("User not found");
+        errorCleared = false;
+      }
+      Serial.println("error"); 
+      break;  
   }
-  previousDir = dir;
-  Serial.print(l);
+/*  Serial.print(l);
   Serial.print(" ");
   Serial.print(fl);
   Serial.print(" ");
@@ -41,7 +66,9 @@ void followUser(){
   Serial.print(" ");
   Serial.print(r);
   Serial.print(" \n");
+  */
 }
+// Function to smooth the turning process (needs work.. potential delay issues)
 void smoothTurnTo(int dir) {
   if (dir == previousDir)
     return;
@@ -56,6 +83,7 @@ void smoothTurnTo(int dir) {
     }
   }
 }
+// Function to determine where the user is
 int getDirection(int l, int fl, int fc, int fr, int r) {
   int max = 0, direction = DIRECTION_LEFT;
   if(l > max){
@@ -77,8 +105,14 @@ int getDirection(int l, int fl, int fc, int fr, int r) {
     max = r;
     direction = DIRECTION_RIGHT;
   }
-  if (max < 50)
-    return DIRECTION_NONE;
+  if (max < 15){
+    errors++;
+    if(errors > 10){
+      return -1;
+    }
+    return previousDir;
+  }
+  errors = 0;
   return direction;
 }
 int takeSamples(int numberOfSamples) {
@@ -90,5 +124,11 @@ int takeSamples(int numberOfSamples) {
     }
   }
   return fl;
+}
+void clearErrors(){
+  if(!errorCleared){
+        Serial2.write("");
+        errorCleared = true;
+    }
 }
 

@@ -13,7 +13,7 @@ void processSerialInput() {
   if(stringComplete){
     switch (buffer[0]) {
       case 'h':
-        playHorn = true;
+        shouldPlayHorn = true;
         Serial.print("playing horn sound\n");
         hornIterator = -1;
         previousMillis = 0;
