@@ -2,13 +2,6 @@
 #include <SoftwareSerial.h>
 #include <NewPing.h>
 #include <NewTone.h>
-#define MAX_DISTANCE 200 // Maximum distance we want to ping for (in centimeters). Maximum sensor distance is rated at 400-500cm.
-#define PING_INTERVAL 33 // How frequently are we going to send out a ping (in milliseconds). 50ms would be 20 times a second.
-#define NUM_OF_PINGS 3 // Number of ping sensors
-#define PING_PIN_TRIG_CENTER 24
-#define PING_PIN_ECHO_RIGHT 23
-#define PING_PIN_ECHO_CENTER 25
-#define PING_PIN_ECHO_LEFT 27
 #define RECEIVER_R A0
 #define RECEIVER_FR A4
 #define RECEIVER_FC A9
@@ -17,7 +10,7 @@
 #define HORN_PIN 11
 #define DIRECTION_LEFT 0
 #define DIRECTION_SLIGHT_LEFT 1
-#define DIRECTION_NONE 2
+#define DIRECTION_FORWARD 2
 #define DIRECTION_SLIGHT_RIGHT 3
 #define DIRECTION_RIGHT 4
 void playStartUpSound();
@@ -25,8 +18,6 @@ void playHorn();
 void processSerialInput();
 void echoCheck();
 void followUser();
-int takeSamples(int);
-void checkPings();
 #define NOTE_B0  31
 #define NOTE_C1  33
 #define NOTE_CS1 35

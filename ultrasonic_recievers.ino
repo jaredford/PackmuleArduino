@@ -8,55 +8,55 @@ void followUser(){
   fc = analogRead(RECEIVER_FC);
   fr = analogRead(RECEIVER_FR);
   r = analogRead(RECEIVER_R);
-  
   int dir = getDirection(l, fl, fc, fr, r);
+  
   switch(dir){
     case DIRECTION_LEFT:
       ST.turn(-30);
       ST.drive(0);
-      Serial.println("hard left");
-      clearErrors();
-      previousDir = dir;
+      Serial2.print("Left");
+      //Serial.println("hard left");
       break;
     case DIRECTION_SLIGHT_LEFT:
       ST.turn(-15);
-      ST.drive(10);
-      Serial.println("left");
-      clearErrors();
-      previousDir = dir;
-      break;
-    case DIRECTION_NONE:
-      ST.turn(0);
       ST.drive(20);
-      Serial.println("none");
-      clearErrors();
-      previousDir = dir;
+      Serial2.print("Slight left");
+      //Serial.println("left");
+      break;
+    case DIRECTION_FORWARD:
+      ST.turn(0);
+      ST.drive(40);
+      Serial2.print("Forward");
+      //Serial.println("forward");
       break;
     case DIRECTION_SLIGHT_RIGHT:
       ST.turn(15);
-      ST.drive(10);
-      Serial.println("right");
-      clearErrors();
-      previousDir = dir;
+      ST.drive(20);
+      Serial2.print("Slight right");
+      //Serial.println("right");
       break;
     case DIRECTION_RIGHT:
       ST.turn(30);
       ST.drive(0);
-      Serial.println("hard right");
-      clearErrors();
-      previousDir = dir;
+      Serial2.print("Right");
+      //Serial.println("hard right");
       break;
     case -1: // We only want to fall into this case if several consecutive errors have occurred
       ST.turn(0);
       ST.drive(0);
       if(errorCleared){
-        Serial2.write("User not found");
+        Serial2.print("User not found");
         errorCleared = false;
       }
       Serial.println("error"); 
-      break;  
+      break;
+     default:
+        successCount++;
+        Serial.println("Adding Success");
+        break;
   }
-/*  Serial.print(l);
+  
+  Serial.print(l);
   Serial.print(" ");
   Serial.print(fl);
   Serial.print(" ");
@@ -66,7 +66,9 @@ void followUser(){
   Serial.print(" ");
   Serial.print(r);
   Serial.print(" \n");
-  */
+  
+  
+  
 }
 // Function to smooth the turning process (needs work.. potential delay issues)
 void smoothTurnTo(int dir) {
@@ -95,7 +97,7 @@ int getDirection(int l, int fl, int fc, int fr, int r) {
   }
   if(fc > max){
     max = fc;
-    direction = DIRECTION_NONE;
+    direction = DIRECTION_FORWARD;
   }
   if (fr > max){
     max = fr;
@@ -105,15 +107,22 @@ int getDirection(int l, int fl, int fc, int fr, int r) {
     max = r;
     direction = DIRECTION_RIGHT;
   }
-  if (max < 15){
+  if (max < 20){
     errors++;
-    if(errors > 10){
+    successCount = 0;
+    if(errors > 5){
       return -1;
     }
     return previousDir;
   }
-  errors = 0;
-  return direction;
+  clearErrors();
+  if(successCount > 5){
+    successCount = 6;// Preventing integer from getting too large
+    Serial2.print(" ");
+    previousDir = direction;
+    return direction; 
+  }
+  return 's';
 }
 int takeSamples(int numberOfSamples) {
   unsigned long fl = 0, fr = 0, temp;
@@ -125,9 +134,10 @@ int takeSamples(int numberOfSamples) {
   }
   return fl;
 }
-void clearErrors(){
+void clearErrors(){  
+  errors = 0;
   if(!errorCleared){
-        Serial2.write("");
+        Serial2.print("");
         errorCleared = true;
     }
 }

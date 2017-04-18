@@ -14,35 +14,42 @@ void processSerialInput() {
     switch (buffer[0]) {
       case 'h':
         shouldPlayHorn = true;
-        Serial.print("playing horn sound\n");
         hornIterator = -1;
         previousMillis = 0;
         break;
       case 'm':
         manualMode = true;
-        Serial.print("m");
+        ST.turn(0);
+        ST.drive(0);
         break;
       case 'a':
         manualMode = false;
-        Serial.print("a");
         break;
+      case 'e':
+          emergencyStopEngaged = true;
+          ST.drive(0);
+          ST.turn(0);
+          Serial2.print("Halted");
+          break;
+      case 'd':
+          emergencyStopEngaged = false;
+          ST.drive(0);
+          ST.turn(0);
+          Serial2.print(" ");
+          break;
       default:
         if(manualMode){
           if(buffer.length() != 6) {
             break;
           }
-          Serial.print(buffer +'\n');
           int speed = buffer.substring(0,3).toInt() - 127;
           int direction = buffer.substring(3).toInt() - 127;
           ST.drive(speed);
           ST.turn(direction);
         }
-        else 
-          Serial.print("Nice try lol\n");
         break;        
-    }   
+    }
     stringComplete = false;
-    buffer = "";
-    
+    buffer = "";    
   }
 }
