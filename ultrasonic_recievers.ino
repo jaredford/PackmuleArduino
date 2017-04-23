@@ -1,61 +1,59 @@
 void followUser(){
   // Variables to hold sensor readings
-  int l, fl, fc, fr, r;
-  
+  int l, fl, fc, fr, r;  
   // Read from all the sensors
   l = analogRead(RECEIVER_L);
   fl = analogRead(RECEIVER_FL);
   fc = analogRead(RECEIVER_FC);
   fr = analogRead(RECEIVER_FR);
   r = analogRead(RECEIVER_R);
-  int dir = getDirection(l, fl, fc, fr, r);
+  int dir = getDirection(l, fl, fc, fr, r);  
   
-  switch(dir){
+ switch(dir){
     case DIRECTION_LEFT:
       ST.turn(-30);
       ST.drive(0);
-      Serial2.print("Left");
+      Serial2.print("Hard Left");
       //Serial.println("hard left");
       break;
     case DIRECTION_SLIGHT_LEFT:
       ST.turn(-15);
       ST.drive(20);
-      Serial2.print("Slight left");
+      Serial2.print("Left");
       //Serial.println("left");
       break;
     case DIRECTION_FORWARD:
       ST.turn(0);
-      ST.drive(40);
+      ST.drive(60);
       Serial2.print("Forward");
       //Serial.println("forward");
       break;
     case DIRECTION_SLIGHT_RIGHT:
       ST.turn(15);
       ST.drive(20);
-      Serial2.print("Slight right");
+      Serial2.print("Right");
       //Serial.println("right");
       break;
     case DIRECTION_RIGHT:
       ST.turn(30);
       ST.drive(0);
-      Serial2.print("Right");
+      Serial2.print("Hard Right");
       //Serial.println("hard right");
       break;
     case -1: // We only want to fall into this case if several consecutive errors have occurred
       ST.turn(0);
       ST.drive(0);
       if(errorCleared){
-        Serial2.print("User not found");
+        Serial2.print("User Lost");
         errorCleared = false;
       }
       Serial.println("error"); 
       break;
      default:
         successCount++;
-        Serial.println("Adding Success");
+        //Serial.println("Adding Success");
         break;
   }
-  
   Serial.print(l);
   Serial.print(" ");
   Serial.print(fl);
@@ -65,25 +63,7 @@ void followUser(){
   Serial.print(fr);
   Serial.print(" ");
   Serial.print(r);
-  Serial.print(" \n");
-  
-  
-  
-}
-// Function to smooth the turning process (needs work.. potential delay issues)
-void smoothTurnTo(int dir) {
-  if (dir == previousDir)
-    return;
-  if (dir < previousDir) {
-    for (int i = previousDir - 1; i >= dir; i--){
-      ST.turn(i);
-    }
-  }
-  else {
-    for (int i = previousDir  + 1; i <= dir; i++){
-      ST.turn(i);
-    }
-  }
+  Serial.println();
 }
 // Function to determine where the user is
 int getDirection(int l, int fl, int fc, int fr, int r) {
@@ -107,7 +87,7 @@ int getDirection(int l, int fl, int fc, int fr, int r) {
     max = r;
     direction = DIRECTION_RIGHT;
   }
-  if (max < 20){
+  if (max < 100){
     errors++;
     successCount = 0;
     if(errors > 5){
@@ -116,8 +96,8 @@ int getDirection(int l, int fl, int fc, int fr, int r) {
     return previousDir;
   }
   clearErrors();
-  if(successCount > 5){
-    successCount = 6;// Preventing integer from getting too large
+  if(successCount > 10){
+    successCount = 11;// Preventing integer from getting too large
     Serial2.print(" ");
     previousDir = direction;
     return direction; 

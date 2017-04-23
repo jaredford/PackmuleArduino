@@ -13,17 +13,19 @@ void processSerialInput() {
   if(stringComplete){
     switch (buffer[0]) {
       case 'h':
-        shouldPlayHorn = true;
-        hornIterator = -1;
+        shouldHonk = true;
         previousMillis = 0;
+        Serial2.print(" ");
         break;
       case 'm':
         manualMode = true;
         ST.turn(0);
         ST.drive(0);
+        Serial2.print(" ");
         break;
       case 'a':
         manualMode = false;
+        Serial2.print(" ");
         break;
       case 'e':
           emergencyStopEngaged = true;
@@ -44,8 +46,20 @@ void processSerialInput() {
           }
           int speed = buffer.substring(0,3).toInt() - 127;
           int direction = buffer.substring(3).toInt() - 127;
+          if(speed < 0) {
+            shouldPlayBackupTone = true;
+          }
+          else {
+            if(!firstBeep && !shouldHonk && !shouldPlayStartup){ 
+              // Stop the backup sound when necessary
+              noNewTone(HORN_PIN);
+            }
+            shouldPlayBackupTone = false;
+            firstBeep = true;
+          }
           ST.drive(speed);
           ST.turn(direction);
+          //Serial.println(buffer);
         }
         break;        
     }

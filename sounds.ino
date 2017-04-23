@@ -1,23 +1,44 @@
-void playStartUpSound() {
-  int length = 7;
-  int notes[] ={NOTE_DS6,NOTE_DS5,NOTE_AS5,NOTE_GS5,NOTE_DS5,NOTE_DS6,NOTE_AS5};
-  int dLay = 125;
-  int delayScaling[] = {3,1,2,2,2,2,4};
-  while(playXP){
-    currentMillis = millis();
-    if(previousMillis == 0 || currentMillis - previousMillis >= dLay * delayScaling[startupIterator]){
-      previousMillis = currentMillis;
-      startupIterator++; 
-      noNewTone(HORN_PIN);
-      playXP = startupIterator < length ? true : false;
-      if(playXP){
-         NewTone(HORN_PIN, notes[startupIterator]);
-      }
+void honk() {
+  int length = 1;
+  int dLay = 300;
+  int notes[] = {NOTE_C6};
+  int delayScaling[] = {1};
+  currentMillis = millis();
+  if(previousMillis == 0 || currentMillis - previousMillis >= dLay * delayScaling[hornIterator]){
+    previousMillis = currentMillis;
+    hornIterator++;    
+    noNewTone(HORN_PIN);     
+    shouldHonk = hornIterator < length ? true : false;
+    if(shouldHonk){
+      NewTone(HORN_PIN, notes[hornIterator]);
+    }
+    else {
+      hornIterator = -1;
     }
   }
 }
 
-void playHorn() {
+void playBackupTone() {
+  int dLay = 500;  
+  currentMillis = millis();
+  if(firstBeep) {
+    previousMillis = 0;
+    firstBeep = false;
+    silence = false;
+  }
+  if(previousMillis == 0 || currentMillis - previousMillis >= dLay){
+    previousMillis = currentMillis;
+    if(silence){
+      noNewTone(HORN_PIN);
+    }
+    else {
+      NewTone(HORN_PIN, NOTE_G7);
+    }
+    silence = !silence;
+  }
+}
+
+void playStartup() {
   int length = 12;
   int dLay = 100;
   int notes[] = {NOTE_G5,NOTE_E5,NOTE_C5,NOTE_C5,NOTE_C5,NOTE_D5,NOTE_E5,NOTE_F5,NOTE_G5,NOTE_G5,NOTE_G5,NOTE_E5};
@@ -27,8 +48,8 @@ void playHorn() {
     previousMillis = currentMillis;
     hornIterator++;    
     noNewTone(HORN_PIN);     
-    shouldPlayHorn = hornIterator < length ? true : false;
-    if(shouldPlayHorn){
+    shouldPlayStartup = hornIterator < length ? true : false;
+    if(shouldPlayStartup){
       NewTone(HORN_PIN, notes[hornIterator]);
     }
     else {

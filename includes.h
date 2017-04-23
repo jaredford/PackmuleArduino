@@ -2,22 +2,31 @@
 #include <SoftwareSerial.h>
 #include <NewPing.h>
 #include <NewTone.h>
-#define RECEIVER_R A0
-#define RECEIVER_FR A4
-#define RECEIVER_FC A9
-#define RECEIVER_FL A12
-#define RECEIVER_L A15
-#define HORN_PIN 11
+#define RECEIVER_R A15
+#define RECEIVER_FR A13
+#define RECEIVER_FC A8
+#define RECEIVER_FL A4
+#define RECEIVER_L A0
+#define IR_THRESHOLD 400
+#define IR_SUCCESS_THRESHOLD 2
+#define IR_LEFT A1
+#define IR_CENTER A6
+#define IR_RIGHT A3
+#define HORN_PIN 10
 #define DIRECTION_LEFT 0
 #define DIRECTION_SLIGHT_LEFT 1
 #define DIRECTION_FORWARD 2
 #define DIRECTION_SLIGHT_RIGHT 3
 #define DIRECTION_RIGHT 4
+#define OBSTACLE_TIMEOUT 1000
 void playStartUpSound();
 void playHorn();
 void processSerialInput();
 void echoCheck();
 void followUser();
+void playStartup();
+void playBackupTone();
+void honk();
 #define NOTE_B0  31
 #define NOTE_C1  33
 #define NOTE_CS1 35
@@ -99,6 +108,7 @@ void followUser();
 #define NOTE_F7  2794
 #define NOTE_FS7 2960
 #define NOTE_G7  3136
+#define NOTE_G8  6272
 #define NOTE_GS7 3322
 #define NOTE_A7  3520
 #define NOTE_AS7 3729
